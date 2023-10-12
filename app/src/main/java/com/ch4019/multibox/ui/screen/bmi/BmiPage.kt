@@ -1,14 +1,16 @@
 package com.ch4019.multibox.ui.screen.bmi
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BottomSheetDefaults
@@ -29,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -46,6 +49,7 @@ fun BmiPage() {
     val showBottomSheet = remember { mutableStateOf(false) }
     val bmiHeight = remember{ mutableStateOf("")}
     val bmiWeight = remember{ mutableStateOf("")}
+    val context = LocalContext.current
     LaunchedEffect(sheetState.currentValue){
         withContext(Dispatchers.IO){
             if (sheetState.currentValue == SheetValue.Hidden){
@@ -66,25 +70,66 @@ fun BmiPage() {
                 .padding(bottom = 16.dp)
         ) {
             Card {
-                OutlinedTextField(
-                    value = bmiHeight.value,
-                    onValueChange = { bmiHeight.value = it },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                Row (
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    placeholder = { Text("请输入身高") },
-                    shape = RoundedCornerShape(15.dp)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                OutlinedTextField(
-                    value = bmiWeight.value,
-                    onValueChange = { bmiWeight.value = it },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    OutlinedTextField(
+                        value = bmiHeight.value,
+                        onValueChange = { bmiHeight.value = it },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier
+                            .weight(1f),
+                        placeholder = { Text("请输入身高") },
+                        shape = RoundedCornerShape(15.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Card (
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        )
+                    ){
+                        Column (
+                            modifier = Modifier.padding(8.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ){
+                            Text(text = "cm")
+                        }
+                    }
+                }
+                Row (
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    placeholder = { Text("请输入体重") },
-                    shape = RoundedCornerShape(15.dp)
-                )
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    OutlinedTextField(
+                        value = bmiWeight.value,
+                        onValueChange = { bmiWeight.value = it },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier
+                            .weight(1f),
+                        placeholder = { Text("请输入体重") },
+                        shape = RoundedCornerShape(15.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Card (
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        )
+                    ){
+                        Column (
+                            modifier = Modifier.padding(8.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ){
+                            Text(text = "kg")
+                        }
+                    }
+                }
             }
             Spacer(modifier = Modifier.weight(1f))
             CardButton(
@@ -92,8 +137,12 @@ fun BmiPage() {
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 ),
                 onClick = {
-                    bmiViewModel.getBmi(bmiHeight.value.toInt(),bmiWeight.value.toDouble())
-                    showBottomSheet.value = true
+                    if (bmiHeight.value.isNotBlank() && bmiWeight.value.isNotBlank()){
+                        bmiViewModel.getBmi(bmiHeight.value.toDouble(),bmiWeight.value.toDouble())
+                        showBottomSheet.value = true
+                    }else {
+                        Toast.makeText(context, "请输入身高和体重", Toast.LENGTH_SHORT).show()
+                    }
                 }
             ) {
                 Text(text = "计算")
