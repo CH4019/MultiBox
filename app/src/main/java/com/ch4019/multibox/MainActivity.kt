@@ -3,6 +3,7 @@ package com.ch4019.multibox
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -17,7 +18,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ch4019.multibox.config.MainNavRoute
-import com.ch4019.multibox.ui.screen.bingwallpapers.BingWallpapersPage
 import com.ch4019.multibox.ui.screen.bmi.BmiPage
 import com.ch4019.multibox.ui.screen.express.ExpressInquiryPage
 import com.ch4019.multibox.ui.screen.index.IndexPage
@@ -29,10 +29,10 @@ import com.ch4019.multibox.ui.theme.MultiBoxTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         //设置全屏
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
         setContent {
             MultiBoxTheme {
                 val navController = rememberNavController()
@@ -77,9 +77,6 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(MainNavRoute.EXPRESS_INQUIRY){
                             ExpressInquiryPage(navController)
-                        }
-                        composable(MainNavRoute.BING_WALLPAPERS){
-                            BingWallpapersPage(navController)
                         }
                         composable(MainNavRoute.TRANSLATION){
                             TranslationPage(navController)
